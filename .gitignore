@@ -7,6 +7,7 @@ __pycache__/
 *.so
 
 
+milvus_playground/
 .idea/
 .ipynb_checkpoints/
 # Distribution / packaging
@@ -172,3 +173,4 @@ cython_debug/
 /docker/volumes/
 /data/bson/
 /data/bson/
+/OPENAI_API_KEY.json
