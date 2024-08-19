@@ -1,6 +1,15 @@
 version: '3.5'
 
 services:
+  attu: #milvus UI repo: https://github.com/zilliztech/attu
+    image: zilliz/attu:v2.4
+    ports:
+      - "8080:3000" # Map the port 3000 of the container to the port 8080 of the host, If you map to 8000 , it will conflict with the Milvus default port
+    environment:
+      - MILVUS_URL=http://milvus-standalone:19530
+    networks:
+      - milvus_network
+
   etcd:
     container_name: milvus-etcd
     image: quay.io/coreos/etcd:v3.5.5
@@ -17,6 +26,8 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - milvus_network
 
   minio:
     container_name: milvus-minio
@@ -35,19 +46,20 @@ services:
       interval: 30s
       timeout: 20s
       retries: 3
+    networks:
+      - milvus_network
 
   standalone:
     container_name: milvus-standalone
     image: milvusdb/milvus:v2.4.8
     command: ["milvus", "run", "standalone"]
     security_opt:
-    - seccomp:unconfined
+      - seccomp:unconfined
     environment:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
-
     volumes:
-      - /local/path/to/your/milvus.yaml:/home/arden/Dropbox/fun_rag_makeup/docker/milvus/configs/milvus.yaml   # Map the local path to the container path
+      - /local/path/to/your/milvus.yaml:/home/arden/Dropbox/fun_rag_makeup/docker/milvus/configs/milvus.yaml # Map the local path to the container path
       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/milvus:/var/lib/milvus
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
@@ -61,7 +73,9 @@ services:
     depends_on:
       - "etcd"
       - "minio"
+    networks:
+      - milvus_network
 
 networks:
-  default:
-    name: milvus
+  milvus_network:
+    name: milvus_network

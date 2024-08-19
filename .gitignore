@@ -6,6 +6,7 @@ __pycache__/
 # C extensions
 *.so
 
+ragas_playground/
 
 milvus_playground/
 .idea/
@@ -174,3 +175,4 @@ cython_debug/
 /data/bson/
 /data/bson/
 /OPENAI_API_KEY.json
+/ragas_playground/
